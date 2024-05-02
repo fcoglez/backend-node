@@ -9,21 +9,32 @@ const { dbConnection } = require('./database/config');
 //CREAR EL SERVIDOR DE EXPRESS
 const app = express();
 
+
+
+
+
 //CONFIGURAR CORS
 app.use(cors());
+
+// Lectura y parseo del body
+app.use(express.json());
+
+
+
+
+
+
 
 //Llamada la base de datos
 dbConnection();
 
 
 //Routes
-app.get('/', (request, response) => {
-    response.json({
-        ok: true,
-        msg: 'Hello Faku',
-        test: 45
-    });
-});
+app.use('/api/users', require('./routes/users.routes'));
+
+
+
+
 
 
 
