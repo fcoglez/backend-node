@@ -1,4 +1,5 @@
 const { response } = require('express');
+const bcryptjs = require('bcryptjs');
 
 const User = require('../models/user.model');
 
@@ -14,7 +15,7 @@ const getUsers = async (request, response) => {
 
 const postUsers = async(request, resp = response) => {
 
-    const { name, password, email } = request.body;
+    const { password, email } = request.body;
 
     try {
         const existingEmail = await User.findOne({ email });
@@ -27,6 +28,12 @@ const postUsers = async(request, resp = response) => {
 
         const user = new User(request.body);
 
+        //Encriptar contraseña
+        const salt = bcryptjs.genSaltSync();
+        user.password = bcryptjs.hashSync(password, salt);
+
+
+        
         await user.save();
 
         resp.json({
@@ -42,9 +49,59 @@ const postUsers = async(request, resp = response) => {
     }  
 }
 
+const putUsers = async(request, resp = response) => {
+    
+    //TODO: Validar token y comprobar si es el usuario correcto
+    
+    const uid = request.params.id;
+    
+    try {
+
+        const dbUser = await User.findById(uid);
+
+        if (!dbUser) {
+            return resp.status(404).json({
+                ok:false,
+                msg: 'User not found'
+            });
+        }
+
+        //Actualizaciones
+
+        // const fields = request.body;
+        const { password, google, email, ...fields } = request.body; //REFACTOR DE LO DE ARRIBA
+
+        if(!dbUser.email !== email){
+            const existingEmail = await User.findOne({ email });
+            if (existingEmail) {
+                return resp.status(400).json({
+                    msg: 'The email exist'
+                });
+            }
+        }
+
+        fields.email = email;
+        const updateUser = await User.findByIdAndUpdate(uid, fields, {new: true});
+
+        resp.json({
+            ok:true,
+            user: updateUser
+        });
+        
+    } catch (error) {
+        console.log(error);
+        resp.status(500).json({
+            ok:false,
+            msg: 'Error inesperado'
+        })
+    }
+    
+}
+
 
 
 module.exports = {
     getUsers,
     postUsers,
+    putUsers
 }
