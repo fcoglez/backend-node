@@ -31,6 +31,7 @@ dbConnection();
 
 //Routes
 app.use('/api/users', require('./routes/users.routes'));
+app.use('/api/login', require('./routes/auth.routes'));
 
 
 
