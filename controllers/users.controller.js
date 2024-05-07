@@ -1,6 +1,7 @@
 const { response } = require('express');
 const bcryptjs = require('bcryptjs');
 
+const { generateTokenJwt } = require('../helpers/jwt');
 const User = require('../models/user.model');
 
 const getUsers = async (request, response) => {
@@ -18,10 +19,11 @@ const postUsers = async(request, resp = response) => {
     const { password, email } = request.body;
 
     try {
-        const existingEmail = await User.findOne({ email });
-        
-        if (existingEmail) {
+        const userDB = await User.findOne({ email });
+      
+        if (userDB) {
             return resp.status(400).json({
+                ok: false,
                 msg: 'The email exist'
             });
         }
@@ -33,15 +35,20 @@ const postUsers = async(request, resp = response) => {
         user.password = bcryptjs.hashSync(password, salt);
 
 
-        
         await user.save();
+        
+        //Generar token. JASON WEB TOKEN
+         const token = await generateTokenJwt(user.uid);
+        
 
-        resp.json({
+        resp.status(200).json({
             ok: true,
-            user
+            user, 
+            token 
         });
         
     } catch (error) {
+        console.log(error);
         resp.status(500).json({
             ok: false,
             msg: 'Error inesperado'

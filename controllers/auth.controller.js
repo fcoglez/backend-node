@@ -3,6 +3,7 @@ const bcryptjs = require('bcryptjs');
 
 
 const User = require('../models/user.model');
+const { generateTokenJwt } = require('../helpers/jwt');
 
 
 
@@ -33,14 +34,12 @@ const login = async (req, res = response) => {
             });
         }
 
-        //Generar token.
-
-
-
+        //Generar token. JASON WEB TOKEN
+        const token = await generateTokenJwt(userDB.id);
 
         res.status(200).json({
             ok: true,
-            msg: 'hola faku'
+            token
         });
 
     } catch (error) {
@@ -53,5 +52,5 @@ const login = async (req, res = response) => {
 }
 
 module.exports = {
-    login
+    login, 
 }
