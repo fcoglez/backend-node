@@ -98,10 +98,42 @@ const putUsers = async(request, resp = response) => {
     
 }
 
+const deleteUsers = async(request, resp = response) => {
+
+    const uid = request.params.id;
+
+    try {
+
+        const dbUser = await User.findById(uid);
+
+        if (!dbUser) {
+            return resp.status(404).json({
+                ok:false,
+                msg: 'User not found'
+            });
+        }
+        
+        await User.findByIdAndDelete(uid);
+
+        resp.status(200).json({
+            ok:true,
+            msg: 'User deleted'
+        })
+
+    } catch (error) {
+        console.log(error);
+        resp.status(500).json({
+            ok:false,
+            msg: 'Error inesperado'
+        })
+    }
+}
+
 
 
 module.exports = {
     getUsers,
     postUsers,
-    putUsers
+    putUsers,
+    deleteUsers
 }
