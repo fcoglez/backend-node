@@ -10,7 +10,7 @@ const getUsers = async (request, response) => {
     
     response.json({
         ok: true,
-        users
+        users,
     });
 }
 
@@ -61,6 +61,7 @@ const putUsers = async(request, resp = response) => {
     //TODO: Validar token y comprobar si es el usuario correcto
     
     const uid = request.params.id;
+  
     
     try {
 
