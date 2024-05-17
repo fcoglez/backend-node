@@ -7,9 +7,9 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 
-const { getHospitals, postHospital, putHospital, deleteHospitals} = require('../controllers/hospitals.controllers');
+const { getHospitals, postHospital, putHospital, deleteHospital} = require('../controllers/hospitals.controllers');
 const { validateFields } = require('../middlewares/validate-fields.middleware');
-const { validateJWT } = require('../middlewares/validate-jwt.middelware');
+const { validateJWT } = require('../middlewares/validate-jwt.middleware');
 
 
 
@@ -22,6 +22,9 @@ router.get('/', getHospitals );
 //POST
 router.post('/', 
     [
+        validateJWT,
+        check('name', 'the name is obligatory').not().isEmpty(),
+        validateFields
     ],
     postHospital
 );
@@ -38,7 +41,7 @@ router.put('/:id',
 
 //DELETE
 router.delete('/:id',
-   deleteHospitals 
+   deleteHospital
 );
 
 
