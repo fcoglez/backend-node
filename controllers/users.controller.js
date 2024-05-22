@@ -4,13 +4,32 @@ const bcryptjs = require('bcryptjs');
 const { generateTokenJwt } = require('../helpers/jwt');
 const User = require('../models/user.model');
 
-const getUsers = async (request, response) => {
+const getUsers = async (req, response) => {
 
-    const users = await User.find({}, 'name password email role google');
+    const paginateFrom = Number(req.query.paginate) || 0;
+    
+    // const users = await User
+    //                         .find({}, 'name password email role google')
+    //                         .skip(paginateFrom)
+    //                         .limit(3);
+    
+    // const totalUsers = await User.countDocuments();    
+    
+    //DE ESTA FORMA, SE EJECUTA LA DOS PROMESAS SIMULTANEAS Y NO TIENE QUE ESPERAR QUE ACABE UNA
+    //PARA QUE SE EJECUTE LA OTRA
+    const [users, totalUsers] = await Promise.all([
+        User
+            .find({}, 'name password email role google')
+            .skip(paginateFrom)
+            .limit(3),
+
+        User.countDocuments()  
+    ]);
     
     response.json({
         ok: true,
         users,
+        totalUsers
     });
 }
 
