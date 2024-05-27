@@ -1,5 +1,6 @@
 const { response } = require('express');
 const { v4: uuidv4 } = require('uuid');
+const { updateImage } = require('../helpers/updateImage');
 
 
 
@@ -37,7 +38,7 @@ const fileUpload = (req, res = response) => {
         return res.status(400).json({
             ok: false,
             msg: 'The extension not validate'
-        }); 
+        }); u
     }
 
     //Generar el nombre del archivo
@@ -54,6 +55,9 @@ const fileUpload = (req, res = response) => {
                 msg: 'Error to move the image'
             }); 
         }
+
+        //Actualizar base de datos
+        updateImage(type, id, fileName);
       
         res.json({
             ok:true,
