@@ -69,10 +69,7 @@ const updateImage = async(type, id, fileName) => {
             await hospital.save();
             return true;
         break; 
-     }
-
-
-    
+     } 
 }
 
 
