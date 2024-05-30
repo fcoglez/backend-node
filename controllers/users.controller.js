@@ -19,7 +19,7 @@ const getUsers = async (req, response) => {
     //PARA QUE SE EJECUTE LA OTRA
     const [users, totalUsers] = await Promise.all([
         User
-            .find({}, 'name password email role google')
+            .find({}, 'name password email role google img')
             .skip(paginateFrom)
             .limit(3),
 
